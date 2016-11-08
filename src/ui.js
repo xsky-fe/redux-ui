@@ -66,14 +66,14 @@ export default function ui(key, opts = {}) {
           // instantiation time wihch is needed for iterating through a list of
           // components with no explicit key
           if (typeof key === 'function') {
-            key = key(props);
+            this.key = key(props);
           }
 
-          if (key === undefined) {
+          if (key === undefined && !this.key) {
             this.key = (WrappedComponent.displayName ||
                    WrappedComponent.name) +
                    Math.floor(Math.random() * (1 << 30)).toString(16);
-          } else {
+          } else if (!this.key) {
             this.key = key;
           }
 
