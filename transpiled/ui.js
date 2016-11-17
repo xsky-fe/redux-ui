@@ -135,7 +135,7 @@ function ui(key) {
           // set ensure we update our global store with the current state.
           if (this.props.ui.getIn(this.uiPath) === undefined && opts.state) {
             var state = this.getDefaultUIState(opts.state);
-            this.context.store.dispatch((0, _actionReducer.mountUI)(this.uiPath, state, opts.reducer));
+            this.context.store.dispatch((0, _actionReducer.mountUI)(this.uiPath, state, opts.reducer, this.props));
           }
         }
 

@@ -34,30 +34,6 @@ export default function reducer(state = defaultState, action) {
     key = [key];
   }
 
-  // Let ui reducer handle custom actions.
-  state.entrySeq().forEach(([key, value]) => {
-    const handleAction = value.get('handleAction');
-    if (handleAction && handleAction.hasOwnProperty(action.type)) {
-      const transforms = handleAction[action.type](value.toObject(), action);
-      if (
-        typeof transforms === 'object' &&
-        transforms.toString() === '[object Object]'
-        ) {
-        state = state.withMutations( s => {
-          Object.keys(transforms).forEach(k => {
-            if (!value.has(k)) {
-              throw new Error(
-                `Couldn't find variable ${k} within your component's UI state ` +
-                `context. Define ${k} before using it in the @ui decorator`
-              );
-            }
-            s.setIn([key, k], transforms[k]);
-          });
-        });
-      }
-    }
-  });
-
   switch (action.type) {
     case UPDATE_UI_STATE:
       const { name, value } = action.payload;
@@ -90,7 +66,7 @@ export default function reducer(state = defaultState, action) {
       break;
 
     case MOUNT_UI_STATE:
-      const { defaults, customReducer } = action.payload;
+      const { defaults, customReducer, props } = action.payload;
       state = state.withMutations( s => {
         // Set the defaults for the component
         s.setIn(key, new Map(defaults));
@@ -102,7 +78,8 @@ export default function reducer(state = defaultState, action) {
           let path = key.join('.');
           s.setIn(['__reducers', path], {
             path: key,
-            func: customReducer
+            func: customReducer, 
+            props
           });
         }
 
@@ -142,8 +119,8 @@ export default function reducer(state = defaultState, action) {
         // TODO: Potentially add the possibility for a global UI state reducer?
         //       Though why wouldn't you just add a custom reducer to the
         //       top-level component?
-        const { path, func } = r;
-        const newState = func(mut.getIn(path), action);
+        const { path, func, props } = r;
+        const newState = func(mut.getIn(path), action, props);
         if (newState === undefined) {
           throw new Error(`Your custom UI reducer at path ${path.join('.')} must return some state`);
         }
@@ -214,13 +191,14 @@ export function unmountUI(key) {
  * during construction prepare the state of the UI reducer
  *
  */
-export function mountUI(key, defaults, customReducer) {
+export function mountUI(key, defaults, customReducer, props) {
   return {
     type: MOUNT_UI_STATE,
     payload: {
       key,
       defaults,
-      customReducer
+      customReducer,
+      props
     }
   }
 }

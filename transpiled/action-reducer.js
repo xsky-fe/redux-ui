@@ -4,11 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.reducerEnhancer = exports.defaultState = exports.SET_DEFAULT_UI_STATE = exports.UPDATE_UI_STATE = exports.MASS_UPDATE_UI_STATE = undefined;
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 exports.default = reducer;
 exports.updateUI = updateUI;
 exports.massUpdateUI = massUpdateUI;
@@ -58,30 +53,6 @@ function reducer() {
     key = [key];
   }
 
-  // Let ui reducer handle custom actions.
-  state.entrySeq().forEach(function (_ref) {
-    var _ref2 = _slicedToArray(_ref, 2),
-        key = _ref2[0],
-        value = _ref2[1];
-
-    var handleAction = value.get('handleAction');
-    if (handleAction && handleAction.hasOwnProperty(action.type)) {
-      (function () {
-        var transforms = handleAction[action.type](value.toObject(), action);
-        if ((typeof transforms === 'undefined' ? 'undefined' : _typeof(transforms)) === 'object' && transforms.toString() === '[object Object]') {
-          state = state.withMutations(function (s) {
-            Object.keys(transforms).forEach(function (k) {
-              if (!value.has(k)) {
-                throw new Error('Couldn\'t find variable ' + k + ' within your component\'s UI state ' + ('context. Define ' + k + ' before using it in the @ui decorator'));
-              }
-              s.setIn([key, k], transforms[k]);
-            });
-          });
-        }
-      })();
-    }
-  });
-
   (function () {
     switch (action.type) {
       case UPDATE_UI_STATE:
@@ -119,7 +90,8 @@ function reducer() {
       case MOUNT_UI_STATE:
         var _action$payload3 = action.payload,
             defaults = _action$payload3.defaults,
-            customReducer = _action$payload3.customReducer;
+            customReducer = _action$payload3.customReducer,
+            props = _action$payload3.props;
 
         state = state.withMutations(function (s) {
           // Set the defaults for the component
@@ -132,7 +104,8 @@ function reducer() {
             var path = key.join('.');
             s.setIn(['__reducers', path], {
               path: key,
-              func: customReducer
+              func: customReducer,
+              props: props
             });
           }
 
@@ -174,9 +147,10 @@ function reducer() {
         //       Though why wouldn't you just add a custom reducer to the
         //       top-level component?
         var path = r.path,
-            func = r.func;
+            func = r.func,
+            props = r.props;
 
-        var newState = func(mut.getIn(path), action);
+        var newState = func(mut.getIn(path), action, props);
         if (newState === undefined) {
           throw new Error('Your custom UI reducer at path ' + path.join('.') + ' must return some state');
         }
@@ -249,13 +223,14 @@ function unmountUI(key) {
  * during construction prepare the state of the UI reducer
  *
  */
-function mountUI(key, defaults, customReducer) {
+function mountUI(key, defaults, customReducer, props) {
   return {
     type: MOUNT_UI_STATE,
     payload: {
       key: key,
       defaults: defaults,
-      customReducer: customReducer
+      customReducer: customReducer,
+      props: props
     }
   };
 }
