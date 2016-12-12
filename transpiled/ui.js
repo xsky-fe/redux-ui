@@ -339,8 +339,12 @@ function ui(key) {
       }, {
         key: 'render',
         value: function render() {
+          // To access the wrapped instance, you need to specify { withRef: true } in opts.
+          var _ref = opts.options || {},
+              withRef = _ref.withRef;
+
           return _react2.default.createElement(WrappedComponent, _extends({}, this.props, {
-            ref: 'WrappedComponentInstance',
+            ref: withRef ? 'WrappedComponentInstance' : undefined,
             uiKey: this.key,
             uiPath: this.uiPath,
             ui: this.mergeUIProps(),

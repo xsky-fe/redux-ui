@@ -290,10 +290,9 @@ export default function ui(key, opts = {}) {
           }, {}) || {};
         }
 
-        // To access the wrapped instance, you need to specify { withRef: true } in opts.
-        const { withRef } = opts;
-
         render() {
+          // To access the wrapped instance, you need to specify { withRef: true } in opts.
+          const { withRef } = opts.options || {};
           return (
             <WrappedComponent
               { ...this.props }
