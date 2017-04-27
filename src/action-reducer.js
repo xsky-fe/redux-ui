@@ -66,7 +66,7 @@ export default function reducer(state = defaultState, action) {
       break;
 
     case MOUNT_UI_STATE:
-      const { defaults, customReducer, props } = action.payload;
+      const { defaults, customReducer, props, refs } = action.payload;
       state = state.withMutations( s => {
         // Set the defaults for the component
         s.setIn(key, new Map(defaults));
@@ -79,7 +79,8 @@ export default function reducer(state = defaultState, action) {
           s.setIn(['__reducers', path], {
             path: key,
             func: customReducer, 
-            props
+            props,
+            refs,
           });
         }
 
@@ -119,8 +120,8 @@ export default function reducer(state = defaultState, action) {
         // TODO: Potentially add the possibility for a global UI state reducer?
         //       Though why wouldn't you just add a custom reducer to the
         //       top-level component?
-        const { path, func, props } = r;
-        const newState = func(mut.getIn(path), action, props);
+        const { path, func, props, refs } = r;
+        const newState = func(mut.getIn(path), action, props, refs);
         if (newState === undefined) {
           throw new Error(`Your custom UI reducer at path ${path.join('.')} must return some state`);
         }
@@ -191,14 +192,15 @@ export function unmountUI(key) {
  * during construction prepare the state of the UI reducer
  *
  */
-export function mountUI(key, defaults, customReducer, props) {
+export function mountUI(key, defaults, customReducer, props, refs) {
   return {
     type: MOUNT_UI_STATE,
     payload: {
       key,
       defaults,
       customReducer,
-      props
+      props,
+      refs,
     }
   }
 }

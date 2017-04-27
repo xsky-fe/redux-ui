@@ -125,7 +125,7 @@ export default function ui(key, opts = {}) {
           // set ensure we update our global store with the current state.
           if (this.props.ui.getIn(this.uiPath) === undefined && opts.state) {
             const state = this.getDefaultUIState(opts.state);
-            this.context.store.dispatch(mountUI(this.uiPath, state, opts.reducer, this.props));
+            this.context.store.dispatch(mountUI(this.uiPath, state, opts.reducer, this.props, this.refs));
           }
         }
 

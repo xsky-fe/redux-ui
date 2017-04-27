@@ -91,7 +91,8 @@ function reducer() {
         var _action$payload3 = action.payload,
             defaults = _action$payload3.defaults,
             customReducer = _action$payload3.customReducer,
-            props = _action$payload3.props;
+            props = _action$payload3.props,
+            refs = _action$payload3.refs;
 
         state = state.withMutations(function (s) {
           // Set the defaults for the component
@@ -105,7 +106,8 @@ function reducer() {
             s.setIn(['__reducers', path], {
               path: key,
               func: customReducer,
-              props: props
+              props: props,
+              refs: refs
             });
           }
 
@@ -148,9 +150,10 @@ function reducer() {
         //       top-level component?
         var path = r.path,
             func = r.func,
-            props = r.props;
+            props = r.props,
+            refs = r.refs;
 
-        var newState = func(mut.getIn(path), action, props);
+        var newState = func(mut.getIn(path), action, props, refs);
         if (newState === undefined) {
           throw new Error('Your custom UI reducer at path ' + path.join('.') + ' must return some state');
         }
@@ -223,14 +226,15 @@ function unmountUI(key) {
  * during construction prepare the state of the UI reducer
  *
  */
-function mountUI(key, defaults, customReducer, props) {
+function mountUI(key, defaults, customReducer, props, refs) {
   return {
     type: MOUNT_UI_STATE,
     payload: {
       key: key,
       defaults: defaults,
       customReducer: customReducer,
-      props: props
+      props: props,
+      refs: refs
     }
   };
 }
