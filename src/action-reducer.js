@@ -123,9 +123,10 @@ export default function reducer(state = defaultState, action) {
         const { path, func, props, refs } = r;
         const newState = func(mut.getIn(path), action, props, refs);
         if (newState === undefined) {
-          throw new Error(`Your custom UI reducer at path ${path.join('.')} must return some state`);
+          mut.deleteIn(path);
+        } else {
+          mut.setIn(path, newState);
         }
-        mut.setIn(path, newState);
       });
       return mut;
     });
