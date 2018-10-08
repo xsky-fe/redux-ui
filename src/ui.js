@@ -58,6 +58,7 @@ export default function ui(key, opts = {}) {
 
         constructor(props, ctx, queue) {
           super(props, ctx, queue);
+          this.WrappedComponentInstance = React.createRef();
 
           // If the key is undefined generate a new random hex key for the
           // current component's UI scope.
@@ -296,7 +297,7 @@ export default function ui(key, opts = {}) {
           return (
             <WrappedComponent
               { ...this.props }
-              ref={ withRef ? 'WrappedComponentInstance' : undefined}
+              ref={ withRef ? this.WrappedComponentInstance : null}
               uiKey={ this.key }
               uiPath={ this.uiPath }
               ui={ this.mergeUIProps() }
