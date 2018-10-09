@@ -94,14 +94,16 @@ function ui(key) {
       function UI(props, ctx, queue) {
         _classCallCheck(this, UI);
 
+        var _this = _possibleConstructorReturn(this, (UI.__proto__ || Object.getPrototypeOf(UI)).call(this, props, ctx, queue));
+
+        _this.WrappedComponentInstance = _react2.default.createRef();
+
         // If the key is undefined generate a new random hex key for the
         // current component's UI scope.
         //
         // We do this in construct() to guarantee a new key at component
         // instantiation time wihch is needed for iterating through a list of
         // components with no explicit key
-        var _this = _possibleConstructorReturn(this, (UI.__proto__ || Object.getPrototypeOf(UI)).call(this, props, ctx, queue));
-
         if (typeof key === 'function') {
           _this.key = key(props);
         }
@@ -340,7 +342,7 @@ function ui(key) {
               withRef = _ref.withRef;
 
           return _react2.default.createElement(WrappedComponent, _extends({}, this.props, {
-            ref: withRef ? 'WrappedComponentInstance' : undefined,
+            ref: withRef ? this.WrappedComponentInstance : null,
             uiKey: this.key,
             uiPath: this.uiPath,
             ui: this.mergeUIProps(),
@@ -356,8 +358,7 @@ function ui(key) {
       // These actions are passed via react-redux connector
       setDefaultUI: _propTypes.func.isRequired,
       updateUI: _propTypes.func.isRequired,
-      massUpdateUI: _propTypes.func.isRequired
-    }, _class.childContextTypes = {
+      massUpdateUI: _propTypes.func.isRequired }, _class.childContextTypes = {
       // uiKey is the name of the parent context's key
       uiKey: _propTypes.string,
       // uiPath is the current path of the UI context
@@ -368,8 +369,7 @@ function ui(key) {
 
       // Actions to pass to children
       updateUI: _propTypes.func,
-      resetUI: _propTypes.func
-    }, _class.contextTypes = {
+      resetUI: _propTypes.func }, _class.contextTypes = {
       // This is used in mergeUIProps and construct() to immediately set
       // props.
       store: _propTypes.any,
