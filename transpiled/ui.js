@@ -67,28 +67,26 @@ function ui(key) {
   return function (WrappedComponent) {
     var _class, _temp;
 
-    // Return a parent UI class which scopes all UI state to the given key
-    return connector((
     /**
-     * UI is a wrapper component which:
-     *   1. Inherits any parent scopes from parent components that are wrapped
-     *      by @UI
-     *   2. Sets up a new UI scope for the current component
-     *   3. Merges the current UI scope into the parent UI scope (where the
-     *      current scope takes precedence over parents)
-     *
-     * This allows normal block-scoping of UI state:
-     *
-     *   1. All UI components must define their local state keys
-     *   2. Upon updating a state key, if it's not in the current scope
-     *      walk up the tree until the variable is set
-     *
-     * This means that any child component can affect the current browser
-     * chrome's UI state whilst maintaining their own local UI state.
-     *
-     * All state will be blown away on navigation by default.
-     */
-    _temp = _class = function (_Component) {
+       * UI is a wrapper component which:
+       *   1. Inherits any parent scopes from parent components that are wrapped
+       *      by @UI
+       *   2. Sets up a new UI scope for the current component
+       *   3. Merges the current UI scope into the parent UI scope (where the
+       *      current scope takes precedence over parents)
+       *
+       * This allows normal block-scoping of UI state:
+       *
+       *   1. All UI components must define their local state keys
+       *   2. Upon updating a state key, if it's not in the current scope
+       *      walk up the tree until the variable is set
+       *
+       * This means that any child component can affect the current browser
+       * chrome's UI state whilst maintaining their own local UI state.
+       *
+       * All state will be blown away on navigation by default.
+       */
+    var UI = (_temp = _class = function (_Component) {
       _inherits(UI, _Component);
 
       function UI(props, ctx, queue) {
@@ -133,7 +131,7 @@ function ui(key) {
           // set ensure we update our global store with the current state.
           if (this.props.ui.getIn(this.uiPath) === undefined && opts.state) {
             var state = this.getDefaultUIState(opts.state);
-            this.context.store.dispatch((0, _actionReducer.mountUI)(this.uiPath, state, opts.reducer, this.props, this.refs));
+            this.props.store.dispatch((0, _actionReducer.mountUI)(this.uiPath, state, opts.reducer, this.props, this.refs));
           }
         }
 
@@ -149,7 +147,7 @@ function ui(key) {
           // We can only see if this component's state is blown away by
           // accessing the current global UI state; the parent will not
           // necessarily always pass down child state.
-          var ui = (0, _utils.getUIState)(this.context.store.getState());
+          var ui = (0, _utils.getUIState)(this.props.store.getState());
           if (ui.getIn(this.uiPath) === undefined && opts.state) {
             var state = this.getDefaultUIState(opts.state, nextProps);
             this.props.setDefaultUI(this.uiPath, state);
@@ -168,7 +166,8 @@ function ui(key) {
 
           var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.props;
 
-          var globalState = this.context.store.getState();
+          console.log('----', this.props);
+          var globalState = this.props.store.getState();
           var state = _extends({}, uiState);
           Object.keys(state).forEach(function (k) {
             if (typeof state[k] === 'function') {
@@ -215,7 +214,7 @@ function ui(key) {
         value: function getMergedContextVars() {
           var _this4 = this;
 
-          var ctx = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.context;
+          var ctx = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.props;
 
           if (!this.uiVars || !this.uiPath) {
             var uiPath = ctx.uiPath || [];
@@ -327,7 +326,7 @@ function ui(key) {
           //
           // We still use @connect() to connect to the store and listen for
           // changes in other cases.
-          var ui = (0, _utils.getUIState)(this.context.store.getState());
+          var ui = (0, _utils.getUIState)(this.props.store.getState());
 
           return Object.keys(this.uiVars).reduce(function (props, k) {
             props[k] = ui.getIn(_this5.uiVars[k].concat(k));
@@ -347,7 +346,8 @@ function ui(key) {
             uiPath: this.uiPath,
             ui: this.mergeUIProps(),
             resetUI: this.resetUI.bind(this),
-            updateUI: this.updateUI.bind(this) }));
+            updateUI: this.updateUI.bind(this)
+          }));
         }
       }]);
 
@@ -382,6 +382,19 @@ function ui(key) {
 
       updateUI: _propTypes.func,
       resetUI: _propTypes.func
-    }, _temp));
+    }, _temp);
+
+    // Return a parent UI class which scopes all UI state to the given key
+
+    return connector(function (props) {
+      return _react2.default.createElement(
+        _reactRedux.ReactReduxContext.Consumer,
+        null,
+        function (_ref2) {
+          var store = _ref2.store;
+          return _react2.default.createElement(UI, _extends({}, props, { store: store }));
+        }
+      );
+    });
   };
 }
