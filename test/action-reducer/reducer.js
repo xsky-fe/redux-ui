@@ -8,7 +8,6 @@ import {
 
 import { assert } from 'chai';
 import { is, Map } from 'immutable';
-import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 import { defaultState } from '../../src/action-reducer.js';
 

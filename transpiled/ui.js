@@ -6,9 +6,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
@@ -62,7 +62,7 @@ function ui(key) {
   // These allow you to pass 'mergeProps' and 'options' keys into the
   // UI decorator's options which will be passed to @connect().
   // TODO: Document
-  opts.mergeProps, opts.options);
+  opts.mergeProps, _extends({}, opts.options, { context: _reactRedux.ReactReduxContext }));
 
   return function (WrappedComponent) {
     var _class, _temp;
@@ -358,7 +358,8 @@ function ui(key) {
       // These actions are passed via react-redux connector
       setDefaultUI: _propTypes.func.isRequired,
       updateUI: _propTypes.func.isRequired,
-      massUpdateUI: _propTypes.func.isRequired }, _class.childContextTypes = {
+      massUpdateUI: _propTypes.func.isRequired
+    }, _class.childContextTypes = {
       // uiKey is the name of the parent context's key
       uiKey: _propTypes.string,
       // uiPath is the current path of the UI context
@@ -369,7 +370,8 @@ function ui(key) {
 
       // Actions to pass to children
       updateUI: _propTypes.func,
-      resetUI: _propTypes.func }, _class.contextTypes = {
+      resetUI: _propTypes.func
+    }, _class.contextTypes = {
       // This is used in mergeUIProps and construct() to immediately set
       // props.
       store: _propTypes.any,

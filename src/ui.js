@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { any, array, func, node, object, string } from 'prop-types';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { connect, ReactReduxContext } from 'react-redux';
 import invariant from 'invariant';
 import { updateUI, massUpdateUI, setDefaultUI, mountUI, unmountUI } from './action-reducer';
 
@@ -28,7 +28,7 @@ export default function ui(key, opts = {}) {
     // UI decorator's options which will be passed to @connect().
     // TODO: Document
     opts.mergeProps,
-    opts.options,
+    { ...opts.options, context: ReactReduxContext},
   );
 
   return (WrappedComponent) => {
