@@ -290,12 +290,12 @@ export default function ui(key, opts = {}) {
       }
 
       render() {
-        // To access the wrapped instance, you need to specify { withRef: true } in opts.
-        const { withRef } = opts.options || {};
+        // To access the wrapped instance, you need to specify { forwardRef: true } in opts.
+        const { forwardRef } = opts.options || {};
         return (
           <WrappedComponent
             {...this.props}
-            ref={withRef ? this.WrappedComponentInstance : null}
+            ref={forwardRef ? this.WrappedComponentInstance : null}
             uiKey={this.key}
             uiPath={this.uiPath}
             ui={this.mergeUIProps()}
