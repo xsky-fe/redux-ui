@@ -32,18 +32,18 @@ describe('@connect options', () => {
 
 
   it('allows you to pass options into connect', () => {
-    const WithRef = ui({
+    const WithForwardRef = ui({
       state: { name: 'child' },
-      options: { withRef: true }
+      options: { forwardRef: true }
     })(Child);
-    let wrapped = renderAndFind(<WithRef />, WithRef);
+    let wrapped = renderAndFind(<WithForwardRef />, WithForwardRef);
     assert.isDefined(wrapped.getWrappedInstance());
 
-    let WithoutRef = ui({
+    let WithoutForwardRef = ui({
       state: { name: 'child' },
-      options: { withRef: false }
+      options: { forwardRef: false }
     })(Child);
-    wrapped = renderAndFind(<WithoutRef />, WithoutRef);
-    assert.throws(() => wrapped.getWrappedInstance(), 'To access the wrapped instance, you need to specify { withRef: true } as the fourth argument of the connect() call.');
+    wrapped = renderAndFind(<WithoutForwardRef />, WithoutForwardRef);
+    assert.throws(() => wrapped.getWrappedInstance(), 'To access the wrapped instance, you need to specify { forwardRef: true } as the fourth argument of the connect() call.');
   });
 });
