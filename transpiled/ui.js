@@ -166,7 +166,6 @@ function ui(key) {
 
           var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.props;
 
-          console.log('----', this.props);
           var globalState = this.props.store.getState();
           var state = _extends({}, uiState);
           Object.keys(state).forEach(function (k) {

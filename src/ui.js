@@ -148,7 +148,6 @@ export default function ui(key, opts = {}) {
       // This is also used within componentWilLReceiveProps and so props
       // also needs to be passed in
       getDefaultUIState(uiState, props = this.props) {
-        console.log('----', this.props);
         const globalState = this.props.store.getState();
         let state = { ...uiState };
         Object.keys(state).forEach(k => {
